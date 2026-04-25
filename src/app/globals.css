@@ -1,0 +1,106 @@
+@import 'tailwindcss';
+
+
+:root {
+  /*Color palette */
+    --background:229 84% 4.9%;
+    --foreground:210 40% 96.1%;  /* texto principal sobre o fundo */
+    --card: 222 47.4% 11.2%; /* fundo dos cards e painéis */
+    --card-foreground: 210 40% 96.1%; /* texto dentro dos cards */
+    --primary: 330 81.2% 60.4%; /* botões principais, CTAs (neon-pink) */
+    --primary-foreground: 229 84% 4.9%; /* texto SOBRE o botão primário (escuro sobre pink) */
+    --secondary: 271 91% 65.1%; /* botões secundários, destaques (neon-purple) */
+    --secondary-foreground: 210 40% 96.1%; /* texto sobre secondary */
+    --muted: 223 42.2% 17.6%; /* fundos de elementos desativados */
+    --muted-foreground: 215 20.2% 65.1%; /* placeholders, datas, labels */
+    --accent: 188 85.7% 53.3%; /* hover de nav, badges ativos (neon-cyan) */
+    --accent-foreground: 229 84% 4.9%; /* texto sobre accent */
+    --destructive: 0 84.2% 60.2%; /* excluir, erro, ação perigosa (vermelho) */
+    --destructive-foreground: 210 40% 96.1%;
+    --success: 165 100% 40.8%; /* verde para ações bem-sucedidas */
+    --success-foreground: 229 84% 4.9%;
+    
+    --border:0 0% 100%;    /*/ 0.07; /* bordas sutis */
+    --input: 0 0% 100%;   /*/ 0.12; /* borda de inputs */
+    --ring: 188 85.7% 53.3%; /* outline de foco (cyan — igual ao accent) */
+
+  /* Spacing scale */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-2xl: 32px;
+
+  /* Border radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  border-color: hsl(var(--border)/0.07);
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Fix for H1 font-size warning in semantic elements */
+section h1,
+article h1,
+aside h1,
+nav h1 {
+  font-size: inherit; /* Explicitly inherit font-size to avoid browser warnings */
+}
+
+
+/* Ensure screen reader only content is properly hidden */
+.sr-only {
+  position: absolute;       /* Remove do fluxo normal da página */
+  width: 1px;               /* Reduz ao mínimo visível */
+  height: 1px;              /* Reduz ao mínimo visível */
+  padding: 0;               /* Remove espaçamento interno */
+  margin: -1px;             /* Empurra o elemento para fora da área visível */
+  overflow: hidden;         /* Esconde qualquer conteúdo que ultrapasse */
+  clip: rect(0, 0, 0, 0);   /* Recorta completamente (fica invisível) */
+  white-space: nowrap;      /* Evita quebra de linha */
+  border: 0;                /* Remove bordas */
+}
+
+.sr-only:focus {
+  position: static;         /* Volta ao fluxo normal */
+  width: auto;              /* Recupera largura original */
+  height: auto;             /* Recupera altura original */
+  overflow: visible;        /* Mostra o conteúdo */
+  clip: auto;               /* Remove o recorte invisível */
+}
+
+/* Focus consistente com seu tema */
+.focus\:ring-offset-background:focus {
+  --tw-ring-offset-color: hsl(var(--background));
+   /* Define a cor do "espaço" entre o elemento e o anel de foco */
+}
+
+/* Modal base */
+.modal {
+  border: none;             /* Remove borda padrão */
+  padding: 0;               /* Remove espaçamento interno */
+  margin: 0;                /* Remove margem */
+  max-width: none;          /* Remove limite de largura */
+  max-height: none;         /* Remove limite de altura */
+  background: transparent;  /* Remove fundo padrão */
+}
+
+/* Backdrop alinhado ao design system */
+.modal::backdrop {
+  background: hsl(var(--background) / 0.6);
+  backdrop-filter: blur(6px);
+}
