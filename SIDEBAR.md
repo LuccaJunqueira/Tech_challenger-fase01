@@ -1,173 +1,155 @@
 # Sidebar — Implementação
 
-Guia para implementar e atualizar a sidebar conforme o design system ByteBank.
+Guia para implementar a sidebar conforme o layout ByteBank.
 
----
-
-## 1. Estrutura Atual
+## 1. Estrutura de Pastas
 
 ```
 src/components/layout/
-├── sidebar.tsx       ← componente principal
-└── sidebaritem.tsx   ← item de menu
+├── sidebar.tsx
+└── sidebar-item.tsx
 ```
 
----
+## 2. Visual de Referência
 
-## 2. Alterações Necessárias
+| Estado | Estilo |
+|--------|--------|
+| Ativo | Fundo bg-white/5, bullet • em text-neon-cyan, texto text-foreground |
+| Inativo | Sem fundo, bullet • em text-muted-foreground, texto text-muted-foreground |
+| Hover (inativo) | Texto muda para text-foreground |
 
-### 2.1 Atualizar sidebar.tsx
+Sem bordas, sem glow, sem ícones — apenas bullet colorido e fundo sutil.
 
-O arquivo deve seguir as seguintes modificações:
+## 3. src/components/layout/sidebar-item.tsx
 
 ```tsx
-// src/components/layout/sidebar.tsx
-import Image from "next/image";
-import { CirclePlus, House, LogOut, Settings, Wallet } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
-import { SidebarItem } from "./sidebaritem";
+interface SidebarItemProps {
+  label: string;
+  href: string;
+  active?: boolean;
+}
 
-// Rotas do sistema
-const routes = {
-  dashboard: '/',
-  transactions: '/transactions',
-  newTransaction: '/transactions/new',
-  settings: '/settings',
-  logout: '/logout',
-};
+export function SidebarItem({ label, href, active }: SidebarItemProps) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? 'page' : undefined}
+      className={cn(
+        'flex items-center gap-3 px-3 py-2 rounded-r8',
+        'text-sm transition-colors duration-150',
+        active
+          ? 'bg-white/5 text-foreground'
+          : 'text-muted-foreground hover:text-foreground'
+      )}
+    >
+      {/* Bullet indicator */}
+      <span
+        className={cn(
+          'text-base leading-none select-none',
+          active ? 'text-neon-cyan' : 'text-muted-foreground'
+        )}
+        aria-hidden="true"
+      >
+        •
+      </span>
+      {label}
+    </Link>
+  );
+}
+```
+
+## 4. src/components/layout/sidebar.tsx
+
+```tsx
+'use client';
+
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { SidebarItem } from './sidebar-item';
+
+const navGroups = [
+  {
+    label: 'PRINCIPAL',
+    items: [
+      { label: 'Dashboard', href: '/' },
+      { label: 'Transações', href: '/transactions' },
+    ],
+  },
+  {
+    label: 'AÇÕES',
+    items: [
+      { label: 'Nova transação', href: '/transactions/new' },
+    ],
+  },
+  {
+    label: 'SISTEMA',
+    items: [
+      { label: 'Configurações', href: '/settings' },
+      { label: 'Sair', href: '/logout' },
+    ],
+  },
+];
 
 export function Sidebar() {
   const pathname = usePathname();
 
-  // Função para verificar rota ativa
   const isActive = (href: string) => {
-    if (href === '/') return pathname === '/';
-    if (href === '/transactions') return pathname.startsWith('/transactions');
+    if (href === '/transactions/new') return pathname === '/transactions/new';
+    if (href === '/transactions') return pathname === '/transactions' || pathname.startsWith('/transactions/');
     return pathname === href;
   };
 
   return (
     <aside
-      className="
-        w-72 h-screen
-        flex flex-col
-        bg-gradient-to-b from-background to-card
-        border-r border-border/50
-        backdrop-blur-xl
-      "
+      aria-label="Menu de navegação principal"
+      className="w-64 h-screen flex flex-col bg-card border-r border-white/8 shrink-0"
     >
-      {/* LOGO */}
-      <div
-        className="
-          h-16 flex items-center
-          px-space-lg
-          border-b border-border/50
-        "
-      >
-        {/* Logo ByteBank - Usar imagem */}
-        <Image 
-          src="/images/Logo.webp" 
-          alt="ByteBank" 
-          width={100} 
-          height={28}
+      {/* Logo */}
+      <div className="h-16 flex items-center px-6 border-b border-white/8">
+        <Image
+          src="/images/Logo.webp"
+          alt="ByteBank"
+          width={120}
+          height={32}
           className="object-contain"
+          priority
         />
       </div>
 
-      {/* MENU */}
-      <div
-        className="
-          flex-1
-          px-space-lg py-space-xl
-          space-y-space-xl
-        "
+      {/* Navegação */}
+      <nav
+        aria-label="Menu principal"
+        className="flex-1 px-4 py-6 flex flex-col gap-6 overflow-y-auto"
       >
-        {/* PRINCIPAL */}
-        <div>
-          <p className="text-xs text-muted-foreground mb-space-sm tracking-wider">
-            PRINCIPAL
-          </p>
-
-          <div className="flex flex-col gap-space-xs">
-            <SidebarItem
-              icon={<House size={18} />}
-              label="Dashboard"
-              href={routes.dashboard}
-              active={isActive(routes.dashboard)}
-            />
-            <SidebarItem
-              icon={<Wallet size={18} />}
-              label="Transações"
-              href={routes.transactions}
-              active={isActive(routes.transactions)}
-            />
+        {navGroups.map((group) => (
+          <div key={group.label}>
+            <p className="text-[10px] font-mono font-semibold tracking-widest text-muted-foreground mb-2 px-3">
+              {group.label}
+            </p>
+            <div className="flex flex-col gap-0.5">
+              {group.items.map((item) => (
+                <SidebarItem
+                  key={item.label}
+                  label={item.label}
+                  href={item.href}
+                  active={isActive(item.href)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        ))}
+      </nav>
 
-        {/* AÇÕES */}
-        <div>
-          <p className="text-xs text-muted-foreground mb-space-sm tracking-wider">
-            AÇÕES
-          </p>
-
-          <div className="flex flex-col gap-space-xs">
-            <SidebarItem
-              icon={<CirclePlus size={18} />}
-              label="Nova transação"
-              href={routes.newTransaction}
-              active={isActive(routes.newTransaction)}
-            />
-          </div>
-        </div>
-
-        {/* SISTEMA */}
-        <div>
-          <p className="text-xs text-muted-foreground mb-space-sm tracking-wider">
-            SISTEMA
-          </p>
-
-          <div className="flex flex-col gap-space-xs">
-            <SidebarItem
-              icon={<Settings size={18} />}
-              label="Configurações"
-              href={routes.settings}
-              active={isActive(routes.settings)}
-            />
-            <SidebarItem
-              icon={<LogOut size={18} />}
-              label="Sair"
-              href={routes.logout}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* FOOTER - Usuário */}
-      <div
-        className="
-          p-space-lg
-          border-t border-border/50
-          flex items-center gap-space-sm
-        "
-      >
-        {/* Avatar - Substituir por imagem quando tiver */}
-        <div
-          className="
-            w-10 h-10
-            rounded-full
-            bg-primary
-            flex items-center justify-center
-            text-primary-foreground text-sm
-            shadow-[0_0_10px_hsl(var(--primary)/0.4)]
-          "
-        >
+      {/* Footer — usuário */}
+      <div className="px-4 py-4 border-t border-white/8 flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">
           TA
         </div>
-
-        <div>
-          <p className="text-sm text-foreground font-medium">Thamiris A.</p>
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-foreground truncate">Thamiris A.</p>
           <p className="text-xs text-muted-foreground">Conta corrente</p>
         </div>
       </div>
@@ -176,98 +158,19 @@ export function Sidebar() {
 }
 ```
 
-### 2.2 Atualizar sidebaritem.tsx
+## 5. Rotas do Sistema
 
-O arquivo pode permanecer com pequenas melhorias:
+| Página | Rota |
+|--------|-----|
+| Transações (lista) | /transactions |
+| Nova transação | /transactions/new |
+| Editar transação | /transactions/[id]/edit |
+| Configurações | /settings |
+| Sair | /logout |
 
-```tsx
-// src/components/layout/sidebaritem.tsx
+## 6. Lógica de rota ativa
 
-import Link from "next/link";
+A função isActive trata dois casos especiais:
 
-interface SidebarItemProps {
-  icon: React.ReactNode;
-  label: string;
-  href: string;
-  active?: boolean;
-}
-
-export function SidebarItem({ icon, label, href, active }: SidebarItemProps) {
-  return (
-    <Link
-      href={href}
-      className={`
-        group relative flex items-center gap-space-sm
-        px-space-md py-space-sm
-        rounded-md
-        text-sm font-medium
-        transition-all duration-200
-
-        ${
-          active
-            ? "bg-accent/15 text-accent border border-accent/30 shadow-[0_0_12px_hsl(var(--accent)/0.2)]"
-            : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
-        }
-      `}
-    >
-      {/* Indicador lateral (ativo) */}
-      {active && (
-        <span
-          className="
-            absolute left-0 top-1/2 -translate-y-1/2
-            h-5 w-[3px]
-            bg-accent
-            rounded-r
-          "
-        />
-      )}
-
-      {/* Ícone */}
-      <span className="transition-transform group-hover:scale-110">
-        {icon}
-      </span>
-
-      {/* Label */}
-      <span>{label}</span>
-    </Link>
-  );
-}
-```
-
----
-
-## 3. Imagens Adicionadas
-
-As imagens já estão em `public/images/`:
-
-| Item | Arquivo | Substituir no código |
-|------|--------|---------------------|
-| Logo ByteBank | `Logo.webp` | `<Image src="/images/Logo.webp" alt="ByteBank" width={120} height={32} />` |
-| Avatar usuário | (usar inicial por enquanto) | `#Código atual com iniciais TA` |
-
----
-
-## 4. Rotas do Sistema
-
-| Página | Rota | Status |
-|-------|-----|--------|
-| Dashboard | `/` | ✓ |
-| Lista transações | `/transactions` | ✓ |
-| Nova transação | `/transactions/new` | ✓ |
-| Editar transação | `/transactions/[id]/edit` | ✓ |
-| Configurações | `/settings` | Pendente |
-| Logout | `/logout` | Pendente |
-
----
-
-## 5. Resumo de Alterações
-
-| Arquivo | Mudança |
-|--------|--------|
-| `sidebar.tsx` | Adicionar `usePathname` para rota ativa, atualizar rotas de transactions |
-| `sidebaritem.tsx` | Manter praticamente igual |
-| `public/images/` | Criar pasta para imagens |
-
----
-
-A sidebar já utiliza as cores e tokens do design system (background, card, accent, primary, muted-foreground, etc.).
+- `/transactions/new` é verificado antes de `/transactions` para evitar falso positivo
+- `/transactions` captura também sub-rotas como `/transactions/1/edit`
