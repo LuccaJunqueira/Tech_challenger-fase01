@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -19,24 +19,12 @@ export default function EditTransactionPage() {
   const transaction = transactions.find((t) => t.id === id);
 
   const [form, setForm] = useState({
-    type: "" as TransactionType | "",
-    amount: "",
-    description: "",
-    category: "",
-    date: "",
-  });
-
-  useEffect(() => {
-    if (transaction) {
-      setForm({
-        type: transaction.type,
-        amount: transaction.amount.toString(),
-        description: transaction.description,
-        category: transaction.category,
-        date: transaction.date,
-      });
-    }
-  }, [transaction]);
+  type: (transaction?.type ?? "") as TransactionType | "",
+  amount: transaction?.amount?.toString() ?? "",
+  description: transaction?.description ?? "",
+  category: transaction?.category ?? "",
+  date: transaction?.date ?? "",
+});
 
   if (!transaction) {
     return (
@@ -52,7 +40,7 @@ export default function EditTransactionPage() {
     );
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.type || !form.amount || !form.description || !form.category)
       return;
