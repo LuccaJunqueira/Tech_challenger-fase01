@@ -21,7 +21,7 @@ export function Button({
 
   const variants = {
     primary: [
-      'bg-gradient-to-r from-neon-pink to-neon-purple',
+      'bg-gradient-to-r from-neon-cyan to-neon-purple',
       'text-white',
       'hover:-translate-y-px hover:shadow-glow-pink',
     ],

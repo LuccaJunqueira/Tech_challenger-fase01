@@ -1,7 +1,9 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from "next/navigation";
+
+import { Header } from "@/components/layout/header";
+import { Button } from "@/components/ui/button";
 
 export default function Error({
   error,
@@ -10,52 +12,37 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const router = useRouter();
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh]">
-      {/* Imagem de erro */}
-      <div className="relative w-[300px] h-[200px] mb-8">
-        <Image
-          src="/images/Erro 404.webp"
-          alt="Algo deu errado"
-          fill
-          className="object-contain"
-          priority
-        />
-      </div>
-
-      {/* Mensagem */}
-      <h2 className="text-2xl font-bold text-foreground mb-2">
-        Algo deu errado
-      </h2>
-      
-      <p className="text-muted-foreground mb-6">
-        Tente novamente mais tarde.
-      </p>
-
-      {/* Botão para tentar novamente */}
-      <button
-        onClick={() => reset()}
-        className="
-          px-6 py-3
-          bg-gradient-to-r from-neon-pink to-neon-purple
-          text-white font-semibold rounded-lg
-          hover:opacity-90 transition-opacity
-          mb-4
-        "
+    <div>
+      <Header showLogin={false} />
+      <main
+        className="relative flex flex-col min-h-[90vh] bg-cover bg-center rounded-lg"
+        style={{ backgroundImage: "url('/images/erro_4042.webp')" }}
       >
-        Tentar novamente
-      </button>
+        {/* Mensagem centralizada no topo*/}
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-16">
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-modal px-16 py-4 flex flex-col items-center gap-2 text-center w-full max-w-2xl">
+            <h2 className="text-2xl font-bold text-foreground">
+              Algo deu errado
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {error.message || 'Erro desconhecido'}
+            </p>
+          </div>
+        </div>
 
-      {/* Link para voltar */}
-      <Link
-        href="/transactions"
-        className="
-          text-sm text-muted-foreground
-          hover:text-foreground transition-colors
-        "
-      >
-        Voltar ao início
-      </Link>
+        {/* Botões na parte inferior */}
+        <div className="absolute bottom-30 left-0 right-0 flex justify-center gap-4">
+          <Button onClick={() => reset()} variant="primary">
+            Tentar novamente
+          </Button>
+          <Button onClick={() => router.back()} variant="secondary">
+            Voltar
+          </Button>
+        </div>
+      </main>
     </div>
   );
 }

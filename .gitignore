@@ -9,6 +9,16 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+/DESIGN_SYSTEM.md
+/LAYOUT.md
+/COMPONENTS.md
+/STORYBOOK.md
+/SIDEBAR.md
+/TRANSACTIONS.md
+/ERROR.md
+/EXECUCAO.md
+
+
 
 # testing
 /coverage

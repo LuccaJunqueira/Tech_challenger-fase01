@@ -1,7 +1,7 @@
 "use client";
-
-import Image from "next/image";
 import { usePathname } from "next/navigation";
+
+import { Logo } from "@/components/ui/logo";
 
 import { SidebarItem } from "./sidebaritem";
 
@@ -45,23 +45,7 @@ export function Sidebar() {
     >
       {/* Logo */}
       <div className="h-16 flex items-center px-6 border-b border-white/8">
-        <Image
-          src="/images/avatar3.png"
-          alt="Logo ByteBank"
-          width={44}
-          height={44}
-          className="object-contain"
-          priority
-        />
-
-        <Image
-          src="/images/logo.png"
-          alt="ByteBank"
-          width={100}
-          height={24}
-          className="object-contain"
-          priority
-        />
+        <Logo />
       </div>
 
       {/* Navegação */}
@@ -91,11 +75,11 @@ export function Sidebar() {
       {/* Footer — usuário */}
       <div className="px-4 py-4 border-t border-white/8 flex items-center gap-3">
         <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">
-          TA
+          LJ
         </div>
         <div className="min-w-0">
           <p className="text-sm font-medium text-foreground truncate">
-            Thamiris A.
+            Lucca J.
           </p>
           <p className="text-xs text-muted-foreground">Conta corrente</p>
         </div>

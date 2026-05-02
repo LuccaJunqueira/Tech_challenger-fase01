@@ -3,9 +3,6 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { JetBrains_Mono, Sora } from "next/font/google";
 
-import { Sidebar } from "@/components/layout/sidebar";
-import { TransactionsProvider } from "@/context/transactions-context";
-
 const sora = Sora({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -31,12 +28,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${sora.variable} ${jetbrainsMono.variable}`}>
       <body>
-        <TransactionsProvider>
-          <div className="flex h-screen overflow-hidden bg-background">
-            <Sidebar />
-            <main className="flex-1 overflow-y-auto">{children}</main>
-          </div>
-        </TransactionsProvider>
+        {children}
       </body>
     </html>
   );
